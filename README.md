@@ -18,7 +18,11 @@ This writeup is quite messy and could probably be cleaned up alot. Sorry for tha
 
 # Extract SSL/TLS Certificates
 ## App Method
-1. Reset your Pulse by holding down the reset button for around 5 seconds
+
+First of all, check if you Tibber Bridge has a reset button somewhere. If not, continue with [Devices without a resetbutton](#devices-without-a-resetbutton-emea)
+
+### Devices with a resetbutton
+1. Reset your Pulse Bridge by holding down the reset button for around 5 seconds. Devices which don't have a resetbutton, can be reset by removing and inserting the bridge 5-10 times, until the led circle lids green. See [Youtube](https://youtu.be/ptUPll4dipE?si=YjDO55KC9yyXcllP) (german)
 2. Disconnect the Pulse Power-Up from the Tibber app by going into Power-Ups > Pulse > Disconnect (If you have previously had it connected)
 3. Open the Tibber app and start setting up the Pulse. When you get to input your WiFi password, make sure to intensionally input the wrong password!
 4. Your app should now show a WiFi error.
@@ -46,6 +50,25 @@ This writeup is quite messy and could probably be cleaned up alot. Sorry for tha
 19. Press send and then apply afterwards.
 20. After a while, the Pulse should show an empty page with just some numbers and characters at the top. Like 8f5g6e6h5f. If it shows MQTTErr or WiFiErr you have to redo everything.
 21. Check that the Pulse now shows on the main screen of the Tibber app(It wont have any data, just make sure the bubble is there. You might have to force-quit the app and restart it for it to show up).
+
+### Devices **without** a resetbutton (EMEA)
+1. Reset your Pulse Bridge by removing and inserting the bridge 5-10 times, until the led circle lids green. See [Youtube](https://youtu.be/ptUPll4dipE?si=YjDO55KC9yyXcllP) (german)
+2. Disconnect the Pulse Bridge Power-Up from the Tibber app by going into Power-Ups > Pulse > Disconnect (If you have previously had it connected)
+3. Connect to the Pulse's network with any wifi enabled device. A computer works fine. The password is shown on the side of the bridge. It looks like this `QWGH-ED12`. The `-` has to be included
+4. Navigate to [](http://10.133.70.1) or scan this QR-Code ![image](https://api.qrserver.com/v1/create-qr-code/?data=http%3A%2F%2F10.133.70.1&size=50x50&margin=2)
+5. When asked for username and password, the username is `admin` and the password is the content of the QR-Code also used for connecting to the wifi of the bridge
+6. Open and save the file from [http://10.133.70.1/params.json](http://10.133.70.1/params.json). This JSON-File should contain all important params of you bridge including all certificates
+7. navigate to the directory of the saved `params.json` and create the certfiles using this command
+```powershell
+$filename=@{"private_key"="Priv.key";"certificate"="Cert.crt";"ca_cert"="CA.ca"}; `
+$(cat params.json | convertfrom-json) | ? { $_.value -match "(cert|private)"} |
+% { out-file -Encoding default -InputObject $_.Value ".\$($filename.$($_.name))" -force }
+```
+
+   
+
+
+
 
 ## UART/Serial Method
 //To come. Basically, the Pulse spits out everything the app sends to it when you connect it to the tibber app. It does require you to open the Pulse and connect a serial debugger to the TX/RX pins and make the pulse and the debugger share a common ground, but not power! The pulse needs to be connected to USB power while doing this The rough idea is to just listen for serial data while connecting it to the app. The output is in the same format you can see in step 12.
