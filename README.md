@@ -65,8 +65,15 @@ $(cat params.json | convertfrom-json) | ? { $_.value -match "(cert|private)"} |
 % { out-file -Encoding default -InputObject $_.Value ".\$($filename.$($_.name))" -force }
 ```
 
-   
 
+## Test the connection
+Assuming you already have mosquitto including the clienttols installed, you can test the connection via this command. Of course its mandatory you have to adjust the path to the cafiles to suit your needs
+```bash
+mosquitto_sub -v -h a1zhmn1192zl1a.iot.eu-west-1.amazonaws.com -t '#' \
+    --cafile ~/fhem-docker/mqtt/tibber/CA.ca  \
+    --key    ~/fhem-docker/mqtt/tibber/Priv.key  \
+    --cert   ~/fhem-docker/mqtt/tibber/Cert.crt
+```
 
 
 
@@ -115,8 +122,7 @@ It should look like this
 15. Save the configuration and restart the addon.
 16. Make sure the log from the addon doesnt show any errors.
 
-# Using local MQTT Broker not hosted on HomeAssistant Supervised
-All the steps above are relevant. Just paste everything I have in the `.conf` file above into your MQTT Broker config file. And change the directories to some local directory.
+
 
 # Pulse Setup
 1. Reset the Pulse again, but DO NOT disconnect it in the Tibber app.
